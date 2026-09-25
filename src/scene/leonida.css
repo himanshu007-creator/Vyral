@@ -1,0 +1,68 @@
+.leonida { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* Time-of-day cross-fade: registered colour properties animate smoothly between phases. */
+@property --s0 { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --s1 { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --s2 { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --s3 { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --u0 { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --u1 { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --u2 { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --glow { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --e0 { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --e1 { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --bld { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --cloud { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --sunY { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --stars { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --moon { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --sun { syntax: '<number>'; inherits: true; initial-value: 1; }
+@property --w0 { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --w1 { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --w2 { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --w3 { syntax: '<number>'; inherits: true; initial-value: 0; }
+.leonida {
+  transition: --s0 8s ease, --s1 8s ease, --s2 8s ease, --s3 8s ease, --u0 8s, --u1 8s, --u2 8s, --glow 8s, --e0 8s, --e1 8s,
+    --bld 8s, --cloud 8s, --sunY 9s ease-in-out, --stars 8s, --moon 8s, --sun 8s, --w0 6s, --w1 6s, --w2 6s, --w3 6s;
+}
+.leonida .l-sunwrap { transform-box: view-box; }
+.leonida .palm-top { animation: l-sway 5s ease-in-out infinite alternate; transform-box: view-box; }
+.leonida .l-twinkle { animation: l-twinkle 3s ease-in-out infinite alternate; }
+.leonida .l-sun { animation: l-sun 8s ease-in-out infinite alternate; transform-origin: 800px 520px; transform-box: view-box; }
+.leonida .l-reflect rect { animation: l-shimmer 2.4s ease-in-out infinite alternate; transform-origin: 800px 0; transform-box: view-box; }
+.leonida .l-reflect rect:nth-child(odd) { animation-delay: -1.2s; }
+.leonida .l-jetski { animation: l-jetski 26s linear infinite; }
+.leonida .l-birds { animation: l-birds 40s linear infinite; }
+.leonida .l-clouds { animation: l-clouds 60s linear infinite alternate; }
+.leonida .l-neon { animation: l-neon 4s steps(1) infinite; }
+.leonida .l-flicker { animation: l-flicker 2.7s steps(1) infinite; }
+.leonida .l-blink { animation: l-blink 1.2s steps(1) infinite; }
+.leonida .l-blink--b { animation-delay: -.6s; }
+.leonida .l-bulb { animation: l-blink .9s steps(1) infinite; }
+.leonida .l-car { animation: l-car 14s linear infinite; }
+.leonida .l-car--back { animation-name: l-car-back; animation-duration: 16s; }
+.leonida .l-heli { animation: l-heli 48s linear infinite; }
+.leonida .l-beam { animation: l-beam 6s ease-in-out infinite alternate; transform-origin: 0 6px; transform-box: view-box; mix-blend-mode: screen; }
+.leonida .l-rotor { animation: l-rotor .15s linear infinite; transform-origin: 0 -6px; transform-box: fill-box; }
+.leonida .l-scan { animation: l-scan 3.5s linear infinite; }
+.leonida .l-ad { cursor: pointer; pointer-events: auto; }
+.leonida .l-ad > g { transition: transform .25s cubic-bezier(.2,1.4,.4,1), filter .25s; transform-box: fill-box; transform-origin: center bottom; }
+.leonida .l-ad:hover > g { transform: scale(1.12); filter: brightness(1.35) drop-shadow(0 0 14px rgba(255,255,255,.7)); }
+.leonida:has(.l-ad:hover) .l-ad:not(:hover) { opacity: .45; }
+.leonida--still * { animation: none !important; }
+
+@keyframes l-sway { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+@keyframes l-twinkle { from { opacity: .15; } to { opacity: .9; } }
+@keyframes l-sun { from { transform: scale(1); } to { transform: scale(1.03); } }
+@keyframes l-shimmer { from { transform: scaleX(.85); } to { transform: scaleX(1.12); } }
+@keyframes l-jetski { from { transform: translate(-120px, 720px); } to { transform: translate(1750px, 710px); } }
+@keyframes l-birds { from { transform: translate(-80px, 200px); } to { transform: translate(1700px, 150px); } }
+@keyframes l-clouds { from { transform: translateX(-40px); } to { transform: translateX(40px); } }
+@keyframes l-neon { 0%, 100% { opacity: 1; } 92% { opacity: .3; } 94% { opacity: 1; } 96% { opacity: .4; } }
+@keyframes l-flicker { 0%, 100% { opacity: .9; } 40% { opacity: .2; } 43% { opacity: .9; } 80% { opacity: .5; } }
+@keyframes l-blink { 50% { opacity: .1; } }
+@keyframes l-car { from { transform: translateX(-40px); } to { transform: translateX(1640px); } }
+@keyframes l-car-back { from { transform: translateX(1640px); } to { transform: translateX(-40px); } }
+@keyframes l-heli { 0% { transform: translate(-150px, 130px); } 50% { transform: translate(820px, 90px); } 100% { transform: translate(1800px, 140px); } }
+@keyframes l-beam { from { transform: rotate(-22deg); } to { transform: rotate(18deg); } }
+@keyframes l-rotor { 50% { transform: scaleX(.2); } }
+@keyframes l-scan { from { transform: translateX(0); } to { transform: translateX(180px); } }

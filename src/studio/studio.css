@@ -1,0 +1,135 @@
+/* ================= Edit Studio: Unlayer, fully Leonida'd =================
+   The editor renders in the light DOM (Tailwind scoped under .image-editor-root),
+   so we restyle it from outside. Our header replaces Unlayer's Bail/Post buttons. */
+
+.studio { display: flex; flex-direction: column; min-height: 0; background: var(--st-bg); color: var(--st-fg); }
+.studio-head {
+  flex: 0 0 48px; display: flex; align-items: center; gap: 8px; padding: 0 10px;
+  background: var(--st-head); color: var(--st-head-fg); border-bottom: 1px solid var(--st-line);
+}
+.studio-back { width: 32px; height: 32px; display: grid; place-items: center; flex: 0 0 auto; }
+.studio-badge { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 7px; text-decoration: none; color: inherit; }
+.studio-badge > span:last-child { display: flex; flex-direction: column; line-height: 1.1; min-width: 0; }
+.studio-badge b { font-size: 15px; }
+.studio-badge small { font-size: 10px; opacity: .65; white-space: nowrap; }
+.studio-badge:hover small { opacity: 1; text-decoration: underline; }
+.studio-logo { width: 22px; height: 22px; flex: 0 0 22px; border-radius: 6px; overflow: hidden; }
+.studio-go { flex: 0 0 auto; padding: 7px 12px; border-radius: 8px; font-weight: 800; font-size: 14px; color: var(--st-go); white-space: nowrap; }
+.studio-go:disabled { opacity: .4; }
+
+.studio-body { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+.studio-body > div:last-child { height: 100% !important; min-height: 0 !important; }
+.studio-overlay {
+  position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 24px; text-align: center; font-size: 13px; background: var(--st-bg);
+}
+.studio-overlay small { opacity: .6; max-width: 80%; }
+.studio-spinner { width: 34px; height: 34px; border-radius: 50%; border: 4px solid var(--st-line); border-top-color: var(--st-accent); animation: spin .8s linear infinite; }
+.studio-overlay .studio-go { background: var(--st-accent); color: var(--st-accent-fg); }
+
+/* ---------- palettes ---------- */
+.studio--gram { /* classic white Instagram editor */
+  --st-bg: #fafafa; --st-fg: #262626; --st-panel: #ffffff; --st-line: #dbdbdb; --st-soft: #efefef;
+  --st-accent: #262626; --st-accent-fg: #fff; --st-head: #fff; --st-head-fg: #262626; --st-go: #0095f6;
+  --st-active: transparent; --st-font: var(--f-ui);
+}
+.studio--sus {
+  --st-bg: #000; --st-fg: #fff; --st-panel: rgba(18,18,18,.94); --st-line: #2a2a2a; --st-soft: #1f1f1f;
+  --st-accent: #fffc00; --st-accent-fg: #000; --st-head: #000; --st-head-fg: #fff; --st-go: #fff;
+  --st-active: #fffc00; --st-font: 'Bebas Neue', sans-serif;
+}
+.studio--sus .studio-go { background: #0eadff; border-radius: 999px; padding: 7px 14px; }
+.studio--roll, .studio--text {
+  --st-bg: #dbe2ea; --st-fg: #1c2a3a; --st-panel: #eef2f6; --st-line: #b7c3d2; --st-soft: #d0dae6;
+  --st-accent: #2a7ae2; --st-accent-fg: #fff; --st-head: linear-gradient(#b0bccd, #6d84a2 50%, #607a9b 51%, #6f87a6); --st-head-fg: #fff; --st-go: #fff;
+  --st-active: linear-gradient(#5aa2ff, #1f6fe0); --st-font: 'Permanent Marker', cursive;
+}
+.studio--roll .studio-go, .studio--text .studio-go { background: linear-gradient(#7ec2ff, #1f86f2 55%, #0b72e6); border: 1px solid #0b5fc0; border-radius: 6px; }
+
+/* ---------- shadcn tokens + hardcoded Tailwind greys → skin ---------- */
+.studio .image-editor-root { --radius: .8rem; font-family: var(--f-ui); background: var(--st-bg) !important; color: var(--st-fg); }
+.studio--gram .image-editor-root { --primary: 204 100% 48%; --primary-foreground: 0 0% 100%; --ring: 204 100% 48%; --secondary: 0 0% 94%; --secondary-foreground: 0 0% 15%; }
+.studio--sus .image-editor-root { --primary: 59 100% 50%; --primary-foreground: 0 0% 0%; --ring: 59 100% 50%; --secondary: 0 0% 14%; --secondary-foreground: 0 0% 100%; --background: 0 0% 4%; }
+.studio--roll .image-editor-root, .studio--text .image-editor-root { --primary: 214 76% 53%; --primary-foreground: 0 0% 100%; --ring: 214 76% 53%; }
+
+.studio .image-editor-root :is(.bg-white, .bg-gray-50, .bg-gray-800, .bg-gray-900) { background-color: var(--st-panel) !important; }
+.studio .image-editor-root :is(.bg-gray-100, .bg-gray-200, .bg-gray-700) { background-color: var(--st-soft) !important; }
+.studio .image-editor-root :is(.border-gray-200, .border-gray-300, .border-gray-600, .border-gray-700, .border-gray-800, .border-b, .border-r, .border-l) { border-color: var(--st-line) !important; }
+.studio .image-editor-root :is(.text-gray-900, .text-gray-800, .text-gray-700, .text-gray-100, .text-gray-200) { color: var(--st-fg) !important; }
+.studio .image-editor-root :is(.text-gray-600, .text-gray-500, .text-gray-400, .text-gray-300) { color: color-mix(in srgb, var(--st-fg) 60%, transparent) !important; }
+.studio .image-editor-root :is(.bg-blue-500, .bg-blue-600) { background: var(--st-accent) !important; color: var(--st-accent-fg) !important; }
+.studio .image-editor-root :is(.text-blue-500, .text-blue-400) { color: var(--st-accent) !important; }
+.studio .image-editor-root input[type='range'] { accent-color: var(--st-accent); }
+
+/* Unlayer's toolbar: keep undo/redo/layers, drop its Bail/Post (our header owns those) and zoom in portrait */
+.studio .image-editor-root > div > div:first-child { padding: 2px 6px !important; min-height: 36px; }
+.studio .image-editor-root > div > div:first-child button:has(.fa-check),
+.studio .image-editor-root > div > div:first-child button:has(.fa-xmark) { display: none !important; }
+.portrait .studio .image-editor-root > div > div:first-child > div:nth-child(2) { display: none !important; }
+
+/* canvas stage */
+.studio .image-editor-root .canvas-container { filter: drop-shadow(0 8px 16px rgba(0,0,0,.25)); }
+.studio--sus .image-editor-root .absolute.inset-0.overflow-hidden { background: #000 !important; }
+.studio--sus .image-editor-root .absolute.inset-0.overflow-hidden::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 3px);
+}
+
+/* tool rail — shared */
+.studio [data-testid='native-tool-nav'] { gap: 2px !important; }
+.studio [data-testid='native-tool-nav'] button { border-radius: 10px !important; transition: transform .15s; }
+.studio [data-testid='native-tool-nav'] button:active { transform: scale(.92); }
+.studio [data-testid='native-tool-options-title'] { font-family: var(--st-font); font-size: 18px; font-weight: 700; line-height: 1; }
+.studio.studio--sus .image-editor-root [data-testid='native-tool-options-title'] { font-size: 24px; font-weight: 400; letter-spacing: .06em; color: var(--st-accent) !important; }
+
+/* ---------- PORTRAIT layouts ---------- */
+.portrait .studio [data-testid='native-editor'] { flex-direction: column !important; position: relative; }
+.portrait .studio [data-testid='native-editor'] > .flex-1 { order: 0; flex: 1 1 auto !important; min-height: 36%; }
+.portrait .studio [data-testid='native-tool-options'] {
+  order: 1; width: 100% !important; max-width: none !important; flex: 0 0 auto !important; max-height: 44%;
+  border-right: 0 !important; border-left: 0 !important; border-top: 1px solid var(--st-line); animation: sheet-up .25s ease-out;
+}
+.portrait .studio [data-testid='native-tool-options'] > div:last-child { padding: 8px 12px !important; }
+.portrait .studio [data-testid='native-chat-panel'] { display: none; }
+@keyframes sheet-up { from { transform: translateY(40%); opacity: 0; } }
+
+/* Instagram: bottom text tabs (FILTER · EDIT style), horizontal filter strip */
+.portrait .studio.studio--gram .image-editor-root [data-testid='native-tool-nav'] {
+  order: 2; width: 100% !important; flex-direction: row !important; overflow-x: auto !important; overflow-y: hidden !important;
+  padding: 0 4px !important; border: 0 !important; border-top: 1px solid var(--st-line) !important; flex: 0 0 auto !important; background: #fff !important;
+}
+.studio.studio--gram .image-editor-root [data-testid='native-tool-nav'] button { flex: 0 0 auto; padding: 12px 10px !important; background: transparent !important; border-radius: 0 !important; border-bottom: 2px solid transparent; }
+.studio.studio--gram .image-editor-root [data-testid='native-tool-nav'] button > span:first-child { display: none !important; }
+.studio.studio--gram .image-editor-root [data-testid='native-tool-nav'] button > span:last-child { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; max-width: none; }
+.studio.studio--gram .image-editor-root [data-testid='native-tool-nav'] button[class~='bg-gray-100'] { border-bottom-color: #262626; color: #262626 !important; }
+.studio.studio--gram .image-editor-root [data-testid='native-filter-presets'] { display: flex !important; flex-wrap: nowrap !important; overflow-x: auto; gap: 10px !important; padding-bottom: 4px; }
+.studio.studio--gram .image-editor-root [data-testid='native-filter-presets'] > * { flex: 0 0 76px !important; display: flex !important; flex-direction: column-reverse !important; gap: 4px; }
+.studio.studio--gram .image-editor-root [data-testid='native-filter-presets'] img { border-radius: 2px !important; }
+.landscape .studio.studio--gram .image-editor-root [data-testid='native-tool-nav'] button > span:first-child { display: block; }
+
+/* Snapchat: icon-only rail floating on the right of the canvas, dark translucent sheet */
+.portrait .studio.studio--sus .image-editor-root [data-testid='native-tool-nav'] {
+  position: absolute !important; right: 6px; top: 8px; z-index: 5; order: 0; width: auto !important; height: auto; max-height: 60%;
+  flex-direction: column !important; background: transparent !important; border: 0 !important; padding: 0 !important; overflow: visible !important;
+}
+.studio.studio--sus .image-editor-root [data-testid='native-tool-nav'] button { width: 44px; padding: 8px 0 !important; background: transparent !important; color: #fff !important; filter: drop-shadow(0 1px 3px rgba(0,0,0,.9)); }
+.portrait .studio.studio--sus .image-editor-root [data-testid='native-tool-nav'] button > span:last-child { display: none; }
+.studio.studio--sus .image-editor-root [data-testid='native-tool-nav'] button[class~='bg-gray-700'],
+.studio.studio--sus .image-editor-root [data-testid='native-tool-nav'] button[class~='bg-gray-100'] { color: #fffc00 !important; transform: scale(1.12); }
+.portrait .studio.studio--sus .image-editor-root [data-testid='native-tool-options'] { backdrop-filter: blur(10px); border-radius: 18px 18px 0 0; }
+.studio.studio--sus .image-editor-root [data-testid='native-tool-nav'] button span:last-child { font-family: var(--f-cond); font-size: 12px; letter-spacing: .05em; }
+
+/* Roll / iText: iOS 6 rail */
+.portrait .studio.studio--roll .image-editor-root [data-testid='native-tool-nav'], .portrait .studio.studio--text .image-editor-root [data-testid='native-tool-nav'] {
+  order: 2; width: 100% !important; flex-direction: row !important; overflow-x: auto !important; padding: 4px !important; border: 0 !important; flex: 0 0 auto !important;
+  background: linear-gradient(#3b3b3b, #0d0d0d) !important;
+}
+.studio.studio--roll .image-editor-root [data-testid='native-tool-nav'] button, .studio.studio--text .image-editor-root [data-testid='native-tool-nav'] button { flex: 0 0 62px; color: #ddd !important; background: transparent !important; }
+.studio.studio--roll .image-editor-root [data-testid='native-tool-nav'] button[class~='bg-gray-100'], .studio.studio--text .image-editor-root [data-testid='native-tool-nav'] button[class~='bg-gray-100'] { background: var(--st-active) !important; color: #fff !important; }
+.studio.studio--roll .image-editor-root [data-testid='native-tool-nav'] button span:last-child, .studio.studio--text .image-editor-root [data-testid='native-tool-nav'] button span:last-child { font-size: 10px; }
+
+/* Video mode: the clip's frame shows through the transparent Unlayer canvas */
+.studio--guide .image-editor-root .absolute.inset-0.overflow-hidden { background: #111 !important; }
+.studio-guide-tip { flex: 0 0 auto; padding: 6px 12px; font-size: 11px; background: var(--st-soft); color: var(--st-fg); }
+.studio-overlay--render { z-index: 20; background: rgba(0,0,0,.82); color: #fff; }
+.studio-guide-video { position: absolute; object-fit: cover; pointer-events: none; }

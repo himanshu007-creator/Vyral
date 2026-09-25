@@ -1,0 +1,72 @@
+.world { position: fixed; inset: 0; overflow: hidden; transition: filter .8s ease, transform 1.2s cubic-bezier(.2,.8,.2,1); cursor: pointer; }
+.world--blur { filter: blur(10px) saturate(.6) brightness(.62); transform: scale(1.06); cursor: default; }
+.world-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55)); pointer-events: none; }
+
+.hud { position: fixed; inset: 0; pointer-events: none; z-index: 30; }
+.hud > * { pointer-events: auto; }
+.hud-tr { position: absolute; top: 18px; right: 22px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; pointer-events: none; }
+.hud-cash { font-size: 40px; color: var(--gta-green); line-height: 1; -webkit-text-stroke: 3px #000; }
+.hud-likes { font-family: var(--f-cond); font-size: 16px; letter-spacing: .1em; text-shadow: 0 0 3px #000, 0 0 2px #000; }
+.stars { display: flex; gap: 2px; }
+.stars svg { width: 26px; height: 26px; fill: rgba(0,0,0,.35); stroke: #000; stroke-width: 1.5; }
+.stars svg.on { fill: #fff; animation: star-flash .5s steps(1) 6; }
+.stars--cops svg.on { animation: cops 1s steps(1) infinite; }
+@keyframes star-flash { 50% { fill: rgba(255,255,255,.2); } }
+@keyframes cops { 0% { fill: #ff2b2b; } 50% { fill: #2b6bff; } }
+
+.help-box {
+  position: absolute; top: 18px; left: 18px; max-width: 290px; padding: 12px 14px;
+  background: rgba(0,0,0,.72); border-radius: 2px; font-size: 14px; line-height: 1.45;
+  animation: fade-in .6s ease both;
+}
+.help-box kbd { display: inline-block; padding: 0 6px; border-radius: 3px; background: #fff; color: #000; font-weight: 800; font-family: var(--f-ui); }
+
+.radar { position: absolute; left: 22px; bottom: 22px; width: 220px; }
+.radar-map { width: 100%; display: block; border: 3px solid #000; border-radius: 6px; opacity: .92; }
+.radar-me { position: absolute; left: 50%; top: 42%; width: 18px; transform: translate(-50%, -50%); }
+.radar .blip { animation: pulse 1.6s infinite; transform-box: fill-box; transform-origin: center; }
+.radar-bars { display: flex; gap: 3px; margin-top: 3px; }
+.radar-bars i { height: 7px; border: 1px solid #000; }
+.bar-clout { flex: 1; background: linear-gradient(90deg, #ff4f9a 70%, rgba(0,0,0,.5) 70%); }
+.bar-esteem { flex: 1; background: linear-gradient(90deg, #3aa0ff 8%, rgba(0,0,0,.5) 8%); }
+
+.hud-mute, .hud-home {
+  position: absolute; bottom: 22px; right: 22px; padding: 6px 10px; border-radius: 4px;
+  background: rgba(0,0,0,.6); font-size: 13px; color: #fff; text-decoration: none;
+}
+.hud-home { right: 70px; font-family: var(--f-cond); letter-spacing: .1em; font-size: 15px; }
+
+.phone-peek {
+  position: fixed; bottom: -30px; left: 50%; transform: translateX(-50%); z-index: 25;
+  width: 120px; height: 90px; border-radius: 18px 18px 0 0; font-size: 34px;
+  background: linear-gradient(145deg, #2b2b30, #0c0c0f); box-shadow: 0 0 0 2px #9ea3ab, 0 0 40px rgba(255,79,154,.6);
+  animation: peek 1.6s ease-in-out infinite alternate;
+}
+.phone-peek span { display: block; margin-top: -24px; }
+@keyframes peek { to { transform: translateX(-50%) translateY(-10px); } }
+
+@media (max-width: 560px), (max-height: 480px) {
+  .radar { width: 130px; left: 10px; bottom: 10px; }
+  .hud-tr { top: 10px; right: 10px; }
+  .hud-cash { font-size: 28px; }
+  .stars svg { width: 18px; height: 18px; }
+  .help-box { top: 10px; left: 10px; max-width: 200px; font-size: 12px; }
+  .phone-stage.is-up ~ .hud, .hud:has(~ .phone-stage.is-up) { display: none; }
+}
+
+.hud-legal { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); max-width: 60%; text-align: center; }
+.legal { font-size: 11px; line-height: 1.5; opacity: .65; }
+.legal a { color: inherit; }
+.legal--compact { font-size: 10px; opacity: .55; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 560px), (max-height: 480px) { .hud-legal { display: none; } }
+
+.radar-cop { transition-property: transform; transition-timing-function: linear; }
+.radar-cop-ring { fill: none; stroke: #ff2b2b; stroke-width: 1.5; animation: cop-ring 1s steps(1) infinite; }
+.cop-r { fill: #ff2b2b; animation: blink .5s steps(1) infinite; }
+.cop-b { fill: #2b6bff; animation: blink .5s steps(1) infinite reverse; }
+@keyframes cop-ring { 0% { stroke: #ff2b2b; } 50% { stroke: #2b6bff; } }
+
+/* Landscape phone: tuck the minimap small, bottom-left, under the phone */
+body:has(.phone-stage.landscape.is-up) .radar { width: 130px; left: 14px; bottom: 12px; }
+body:has(.phone-stage.landscape.is-up) .hud-tr { transform: scale(.8); transform-origin: top right; }
+body:has(.phone-stage.landscape.is-up) .hud-legal { display: none; }

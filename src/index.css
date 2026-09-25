@@ -1,0 +1,112 @@
+@font-face {
+  font-family: 'Pricedown';
+  src: url('/fonts/pricedown.otf') format('opentype');
+  font-display: swap;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sunset: linear-gradient(135deg, #ffb36b 0%, #ff4f9a 45%, #7b2ff7 100%);
+  --pink: #ff4f9a;
+  --orange: #ffb36b;
+  --violet: #7b2ff7;
+  --cyan: #00e5ff;
+  --night: #12061f;
+  --gta-green: #72d27a;
+  --gold: #ffd23f;
+  --f-gta: 'Pricedown', 'Anton', Impact, sans-serif;
+  --f-cond: 'Bebas Neue', 'Anton', sans-serif;
+  --f-ui: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --f-script: 'Grand Hotel', cursive;
+  font-family: var(--f-ui);
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+html, body, #root { height: 100%; }
+body { background: var(--night); overflow-x: hidden; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+input, textarea { font: inherit; }
+img { display: block; max-width: 100%; }
+::-webkit-scrollbar { width: 0; height: 0; }
+
+.gta-title {
+  font-family: var(--f-gta);
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  -webkit-text-stroke: 2px #000;
+  paint-order: stroke fill;
+}
+
+.sunset-text {
+  background: var(--sunset);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- iOS 6 glossy alert (shared) ---------- */
+.ios-alert-veil {
+  position: absolute; inset: 0; z-index: 90;
+  background: radial-gradient(circle, rgba(0,0,0,.25), rgba(0,0,0,.6));
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+  animation: fade-in .15s ease-out;
+}
+.ios-alert {
+  width: 100%; max-width: 280px;
+  border: 2px solid rgba(255,255,255,.85);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(64,86,136,.96) 0%, rgba(24,40,84,.96) 50%, rgba(10,24,64,.97) 51%, rgba(14,30,76,.97) 100%);
+  box-shadow: 0 10px 30px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.4);
+  padding: 16px 14px 12px;
+  text-align: center;
+  text-shadow: 0 -1px 0 rgba(0,0,0,.6);
+  animation: alert-pop .35s cubic-bezier(.2,1.6,.4,1);
+}
+.ios-alert h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.ios-alert p { font-size: 14px; line-height: 1.35; margin-bottom: 14px; color: #eef2ff; }
+.ios-alert-btns { display: flex; gap: 8px; }
+.ios-alert-btns button {
+  flex: 1; padding: 9px 6px; border-radius: 6px; font-weight: 700; font-size: 15px;
+  border: 1px solid rgba(0,0,0,.5);
+  background: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,.08) 50%, rgba(255,255,255,.02) 51%, rgba(255,255,255,.12));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
+}
+.ios-alert-btns button:last-child { background: linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,.2) 50%, rgba(255,255,255,.1) 51%, rgba(255,255,255,.25)); }
+
+/* ---------- Mission passed ---------- */
+.passed {
+  position: fixed; left: 0; right: 0; top: 30%; z-index: 200; pointer-events: none;
+  text-align: center; animation: passed 4.2s ease-in-out forwards;
+}
+.passed-band {
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,.75) 20%, rgba(0,0,0,.75) 80%, transparent);
+  padding: 18px 0 14px;
+}
+.passed h2 { font-size: clamp(40px, 7vw, 84px); color: var(--gold); line-height: 1; }
+.passed p { font-family: var(--f-cond); font-size: clamp(18px, 2.4vw, 28px); letter-spacing: .12em; margin-top: 6px; }
+
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes alert-pop { from { transform: scale(1.2); opacity: 0; } 60% { transform: scale(.96); opacity: 1; } }
+@keyframes passed {
+  0% { opacity: 0; transform: scale(1.4); }
+  8% { opacity: 1; transform: scale(1); }
+  85% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 50% { transform: scale(1.15); } }
+
+/* SusChat logo idle animation (used by landing + app) */
+.sus-anim .sus-pupils { animation: shifty 2.4s ease-in-out infinite; }
+.sus-anim .sus-bubble { animation: bubble 2.4s ease-in-out infinite; transform-origin: 20px 30px; transform-box: view-box; }
+@keyframes shifty { 0%, 20% { transform: translateX(0); } 30%, 55% { transform: translateX(-6px); } 65%, 100% { transform: translateX(0); } }
+@keyframes bubble { 0%, 10% { transform: scale(0); } 22%, 85% { transform: scale(1); } 100% { transform: scale(0); } }
+
+/* Infinite reel pager (Reelgram Reels, SusChat Nearby) */
+.reel-pager { position: relative; flex: 1; min-height: 0; overflow: hidden; touch-action: none; outline: none; background: #000; user-select: none; }
+.reel-slide { position: absolute; inset: 0; overflow: hidden; }
+.passed--stars h2 { color: #fff; }
+.passed--stars p { color: var(--gold); }

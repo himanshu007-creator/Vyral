@@ -1,0 +1,72 @@
+.ios-app { display: flex; flex-direction: column; min-height: 0; background: #fff; color: #000; }
+.ios-nav--dark { background: linear-gradient(rgba(40,40,40,.95), rgba(0,0,0,.95)); color: #fff; border-color: #000; }
+.ios-row-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ios-row-body b { font-size: 15px; }
+.ios-row-body small { font-size: 12.5px; color: #7f7f7f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ios-row:active .ios-row-body small { color: #fff; }
+.ios-row b.missed { color: #e5231b; }
+.ios-row .when { font-size: 12px; color: #2a6bd1; white-space: nowrap; }
+.ios-row .info { color: #2a6bd1; font-size: 18px; }
+.ios-row .chev { color: #b0b0b0; font-size: 22px; }
+.unread { width: 10px; height: 10px; flex: 0 0 10px; border-radius: 50%; }
+.unread.on { background: radial-gradient(circle at 40% 30%, #8fc7ff, #1a73e8 70%); }
+.seg { display: inline-flex; border: 1px solid #2d3642; border-radius: 5px; overflow: hidden; }
+.seg button { padding: 5px 14px; font-size: 12px; font-weight: 700; background: linear-gradient(#8a9cb5, #4a6286 50%, #3f5a80 51%, #4f6a90); }
+.seg button.on { background: linear-gradient(#3f5a80, #2d4466); box-shadow: inset 0 2px 4px rgba(0,0,0,.4); }
+
+/* SMS — iOS 6 glossy bubbles */
+.sms { flex: 1; overflow-y: auto; padding: 12px 8px; background: #dbe2ed; display: flex; flex-direction: column; gap: 6px; }
+.sms-row { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.sms-row.me { align-items: flex-end; }
+.bubble {
+  max-width: 78%; padding: 7px 12px; border-radius: 16px; font-size: 14px; line-height: 1.3;
+  background: linear-gradient(#fdfdfd, #e3e3e3); border: 1px solid #b9b9b9; box-shadow: 0 1px 1px rgba(0,0,0,.15);
+}
+.bubble.me { color: #fff; background: linear-gradient(#7ec2ff, #1f86f2 55%, #0b72e6); border-color: #0b5fc0; text-shadow: 0 -1px 0 rgba(0,0,0,.25); }
+.bubble img { margin-top: 6px; border-radius: 10px; max-height: 220px; }
+.sms-edit { padding: 7px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; color: #fff; background: linear-gradient(135deg, #ffcc4d, #ff2e88 60%, #7b2ff7); box-shadow: 0 2px 8px rgba(255,46,136,.4); animation: pulse 1.6s ease-in-out infinite; }
+.sms-receipt { align-self: flex-end; font-size: 11px; color: #6b7686; font-weight: 600; }
+.sms-input { display: flex; gap: 6px; padding: 6px; background: linear-gradient(#e9ecef, #c7ccd3); border-top: 1px solid #9aa2ac; }
+.sms-input input { flex: 1; border-radius: 16px; border: 1px solid #9aa2ac; padding: 6px 12px; font-size: 14px; box-shadow: inset 0 1px 2px rgba(0,0,0,.2); outline: none; }
+.sms-input button { padding: 0 12px; border-radius: 6px; font-weight: 700; color: #fff; background: linear-gradient(#7ec2ff, #1f86f2 55%, #0b72e6); border: 1px solid #0b5fc0; }
+
+/* iCall */
+.call-detail { background: #dbe2ea; padding: 14px; }
+.call-card { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.call-card span { display: flex; flex-direction: column; }
+.call-card b { font-size: 20px; }
+.call-card small { color: #6b7686; }
+.call-note { background: #fff; border: 1px solid #b7c3d2; border-radius: 8px; padding: 10px; font-size: 13px; margin-bottom: 6px; }
+.call-btns { display: flex; gap: 6px; margin-top: 12px; }
+.call-btns button { flex: 1; padding: 12px 4px; border-radius: 8px; font-weight: 700; font-size: 13px; background: linear-gradient(#fff, #e3e6ea); border: 1px solid #b7c3d2; color: #2a6bd1; }
+.calling { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; text-align: center; background: radial-gradient(circle at 50% 30%, #3b4a63, #0b0f18); }
+.calling b { font-size: 24px; }
+.calling span { opacity: .7; }
+.calling-vm { font-size: 14px; line-height: 1.45; background: rgba(255,255,255,.08); border-radius: 12px; padding: 12px; }
+.calling-end { margin-top: 16px; width: 70%; padding: 12px; border-radius: 10px; font-weight: 800; background: linear-gradient(#ff6a60, #d8261c 50%, #c41b12 51%, #d52a20); border: 1px solid #8a0e08; }
+
+/* FruitRoll */
+.roll-folders { display: flex; gap: 6px; padding: 8px; overflow-x: auto; border-bottom: 1px solid #ddd; }
+.roll-folders button { flex: 0 0 auto; padding: 6px 12px; border-radius: 999px; background: #eee; font-size: 12px; font-weight: 700; }
+.roll-folders button.on { background: #2a6bd1; color: #fff; }
+.roll-folders small { opacity: .6; }
+.roll-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; padding: 2px; align-content: start; }
+.landscape .roll-grid { grid-template-columns: repeat(7, 1fr); }
+.roll-grid button { aspect-ratio: 1; overflow: hidden; background: #eee; }
+.roll-grid img { width: 100%; height: 100%; object-fit: cover; }
+.roll-empty { grid-column: 1 / -1; padding: 30px 20px; text-align: center; color: #888; font-size: 13px; line-height: 1.5; }
+.roll-photo { display: flex; flex-direction: column; background: #000; min-height: 0; }
+.roll-stage { position: relative; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; touch-action: pan-y; }
+.roll-stage img { max-width: 100%; max-height: 100%; object-fit: contain; user-select: none; }
+.roll-tag { position: absolute; top: 12px; padding: 4px 10px; background: #c8262e; font-weight: 800; font-size: 11px; letter-spacing: .05em; transform: rotate(-4deg); }
+.roll-tools { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: linear-gradient(rgba(40,40,40,.95), #000); font-size: 20px; }
+.roll-edit { font-size: 13px; font-weight: 800; padding: 8px 14px; border-radius: 999px; background: linear-gradient(135deg, #ffcc4d, #ff2e88 60%, #7b2ff7); }
+
+.sms-typing { display: flex; gap: 4px; padding: 10px 12px; }
+.sms-typing i { width: 7px; height: 7px; border-radius: 50%; background: #9aa2ac; animation: typing 1s infinite; }
+.sms-typing i:nth-child(2) { animation-delay: .15s; }
+.sms-typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes typing { 50% { transform: translateY(-3px); opacity: .4; } }
+.roll-grid button { position: relative; }
+.roll-vid { position: absolute; left: 4px; bottom: 3px; font-size: 10px; font-weight: 800; color: #fff; text-shadow: 0 1px 2px #000; }
+.roll-stage video { max-width: 100%; max-height: 100%; }
