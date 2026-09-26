@@ -2,6 +2,7 @@ import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import Landing from './landing/Landing.jsx';
+import { Analytics } from '@vercel/analytics/react';
 
 // "/" is the fake store page; "/app" is the phone. The editor bundle only loads on /app.
 const App = lazy(() => import('./App.jsx'));
@@ -16,5 +17,6 @@ createRoot(document.getElementById('root')).render(
     ) : (
       <Landing />
     )}
+    <Analytics />
   </StrictMode>,
 );
