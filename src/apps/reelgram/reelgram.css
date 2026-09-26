@@ -221,3 +221,6 @@
 .rg-mystory .rg-sheet { color: #262626; }
 .rg-grid button.is-reel { aspect-ratio: 9 / 16; }
 .rg-empty-story { display: grid; place-items: center; }
+.rg-missing { margin: auto; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; color: #262626; }
+.rg-missing span { font-size: 13px; color: #8e8e8e; }
+.rg-missing button { margin-top: 8px; padding: 8px 16px; border-radius: 8px; background: #0095f6; color: #fff; font-weight: 600; }

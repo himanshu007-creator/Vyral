@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Leonida from '../scene/Leonida';
 import { useGame } from '../game';
 import { fmt } from '../lib/clout';
-import { isMuted, setMuted, stationName } from '../lib/sfx';
+import { setMuted, stationName, useMuted } from '../lib/sfx';
 import Legal from '../ui/Legal';
 import './world.css';
 
@@ -72,7 +72,7 @@ function Radar() {
 
 export default function World({ up, onPickup }) {
   const { stars, totalLikes } = useGame();
-  const [muted, setM] = useState(isMuted);
+  const muted = useMuted();
   return (
     <>
       <div className={`world ${up ? 'world--blur' : ''}`} onClick={onPickup}>
@@ -96,10 +96,7 @@ export default function World({ up, onPickup }) {
           className="hud-mute"
           title={muted ? 'Sound off' : `📻 ${stationName()} · live from Miami`}
           aria-label={muted ? 'Turn sound on' : 'Turn radio and sound off'}
-          onClick={() => {
-            setMuted(!muted);
-            setM(!muted);
-          }}
+          onClick={() => setMuted(!muted)}
         >
           {muted ? '🔇' : '🔊'}
         </button>

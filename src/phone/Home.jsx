@@ -74,6 +74,8 @@ export default function Home({ onOpen }) {
   const { stars, totalLikes, unread, clock } = useGame();
   const [page, setPage] = useState(0);
   const pagesRef = useRef(null);
+  const dragRef = useRef(null);
+  const go = (i) => pagesRef.current?.scrollTo({ left: i * pagesRef.current.clientWidth, behavior: 'smooth' });
   const weather = clock.h >= 20 || clock.h < 6 ? '🌙 84°' : clock.h < 17 ? '☀️ 92°' : '🌇 88°';
   return (
     <div className="home">
@@ -82,6 +84,21 @@ export default function Home({ onOpen }) {
         className="home-pages"
         ref={pagesRef}
         onScroll={(e) => setPage(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))}
+        // Touch scrolls natively; a mouse gets drag-to-swipe like a real home screen.
+        onPointerDown={(e) => {
+          if (e.pointerType === 'mouse') dragRef.current = e.clientX;
+        }}
+        onPointerUp={(e) => {
+          const dx = typeof dragRef.current === 'number' ? e.clientX - dragRef.current : 0;
+          dragRef.current = null;
+          if (Math.abs(dx) > 40) {
+            go(dx < 0 ? 1 : 0);
+            dragRef.current = 'swiped'; // swallow the click that follows, so a swipe never opens an app
+            setTimeout(() => (dragRef.current = null));
+          }
+        }}
+        onPointerLeave={() => (dragRef.current = null)}
+        onClickCapture={(e) => dragRef.current === 'swiped' && e.stopPropagation()}
       >
         <section className="home-page">
           <div className="home-grid">
@@ -131,8 +148,8 @@ export default function Home({ onOpen }) {
         </section>
       </div>
       <div className="page-dots">
-        <i className={page === 0 ? 'on' : ''} onClick={() => pagesRef.current?.scrollTo({ left: 0, behavior: 'smooth' })} />
-        <i className={page === 1 ? 'on' : ''} onClick={() => pagesRef.current?.scrollTo({ left: 9999, behavior: 'smooth' })} />
+        <i className={page === 0 ? 'on' : ''} onClick={() => go(0)} />
+        <i className={page === 1 ? 'on' : ''} onClick={() => go(1)} />
       </div>
       <div className="dock">
         {DOCK.map((a, i) => (

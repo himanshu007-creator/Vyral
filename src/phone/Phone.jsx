@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGame } from '../game';
-import { play } from '../lib/sfx';
+import { play, setMuted, useMuted } from '../lib/sfx';
 import { ReelgramLogo, SusChatLogo, ICallLogo, ITextLogo, FruitRollLogo } from './Icons';
 import IncomingCall from './IncomingCall';
 import PhoneBack from './PhoneBack';
@@ -15,6 +15,7 @@ export const AppLogo = ({ app }) => {
 
 function StatusBar({ locked, clock, battery, signal }) {
   const low = battery < 10;
+  const muted = useMuted();
   return (
     <div className="sb">
       <span className="sb-left">
@@ -27,6 +28,10 @@ function StatusBar({ locked, clock, battery, signal }) {
       </span>
       <span className="sb-time">{locked ? '🔒' : `${clock.hhmm} ${clock.ampm}`}</span>
       <span className={`sb-right ${low ? 'low' : ''}`}>
+        {/* the HUD's mute button is hidden on phones, so the status bar carries one */}
+        <button className="sb-mute" onClick={() => setMuted(!muted)} aria-label={muted ? 'Turn sound on' : 'Turn radio and sound off'}>
+          {muted ? '🔇' : '🔊'}
+        </button>
         {Math.round(battery)}%{' '}
         <i className="sb-batt">
           <b style={{ width: `${battery}%` }} />
@@ -89,7 +94,7 @@ function Dialog() {
   );
 }
 
-export default function Phone({ up, orientation, locked, studio, current, toast, onHome, onRotate, children }) {
+export default function Phone({ up, orientation, tilt, locked, studio, current, toast, onHome, onRotate, children }) {
   const { clock, banners, alert, openNotif, battery, signal } = useGame();
   const stageRef = useRef(null);
   const holdRef = useRef(null);
@@ -116,17 +121,17 @@ export default function Phone({ up, orientation, locked, studio, current, toast,
     setTurned(true);
   }
 
-  // Glass glare + wallpaper parallax follow the pointer.
+  // Glass glare follows the mouse. Vars go on the glare itself, not the stage: setting them on the stage
+  // restyled the whole phone (editor included) on every move, and touch-scrolling fired it constantly.
+  const glareRef = useRef(null);
   useEffect(() => {
     const move = (e) => {
-      const el = stageRef.current;
-      if (!el) return;
+      const el = glareRef.current;
+      if (!el || e.pointerType !== 'mouse') return;
       el.style.setProperty('--gx', `${(e.clientX / innerWidth) * 100}%`);
       el.style.setProperty('--gy', `${(e.clientY / innerHeight) * 100}%`);
-      el.style.setProperty('--px', `${(e.clientX / innerWidth - 0.5) * -14}px`);
-      el.style.setProperty('--py', `${(e.clientY / innerHeight - 0.5) * -10}px`);
     };
-    addEventListener('pointermove', move);
+    addEventListener('pointermove', move, { passive: true });
     return () => removeEventListener('pointermove', move);
   }, []);
 
@@ -147,7 +152,7 @@ export default function Phone({ up, orientation, locked, studio, current, toast,
   };
 
   return (
-    <div ref={stageRef} className={`phone-stage ${up ? 'is-up' : ''} ${orientation} ${studio ? 'is-studio' : ''} ${turned ? 'turned' : ''} ${picking ? 'picking' : ''}`}>
+    <div ref={stageRef} className={`phone-stage ${up ? 'is-up' : ''} ${orientation} ${tilt ? `tilt-${tilt}` : ''} ${studio ? 'is-studio' : ''} ${turned ? 'turned' : ''} ${picking ? 'picking' : ''}`}>
       <div className="phone">
         <PhoneBack />
         <i className="phone-btn phone-btn--power" />
@@ -177,7 +182,7 @@ export default function Phone({ up, orientation, locked, studio, current, toast,
               }}
             />
           )}
-          <i className="phone-glare" />
+          <i className="phone-glare" ref={glareRef} />
           {picking && <i className="tap-ripple" />}
           <button className="home-float" aria-label="Home" onClick={onHome} />
         </div>

@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from 'react';
+
 // Sound effects via Web Audio: every clip is fetched + decoded once, then plays instantly (and can overlap).
 // Only a handful of real files exist; everything else maps onto them.
 const FILES = ['notify', 'tap', 'shutter', 'passed', 'ring', 'typing', 'unlock'];
@@ -67,6 +69,7 @@ export const stationName = () => STATIONS[station]?.name;
 
 const live = new Set(); // playing sfx sources, so mute can cut them (e.g. a ringing phone)
 export const isMuted = () => muted;
+const subs = new Set();
 export function setMuted(v) {
   muted = v;
   localStorage.setItem('vyral:muted', v ? '1' : '0');
@@ -74,7 +77,14 @@ export function setMuted(v) {
     radio?.pause();
     live.forEach((stop) => stop());
   } else if (radio) tune();
+  subs.forEach((fn) => fn());
 }
+/** Mute state as a hook, so every toggle (HUD, status bar) stays in sync. */
+export const useMuted = () =>
+  useSyncExternalStore(
+    (fn) => (subs.add(fn), () => subs.delete(fn)),
+    () => muted,
+  );
 
 /** Play a sound. Returns a stop() function (used for the looping ringtone). */
 export function play(name, volume = 0.6, { loop = false } = {}) {

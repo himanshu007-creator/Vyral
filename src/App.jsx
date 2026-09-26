@@ -34,6 +34,59 @@ function Passed({ passed }) {
   );
 }
 
+const SMALL = '(max-width: 560px), (max-height: 480px)';
+const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.userAgent));
+
+/** Small-screen facts: viewport orientation, plus which way the device is physically tilted (gravity). */
+function useDevice() {
+  const [dev, setDev] = useState(() => ({ small: matchMedia(SMALL).matches, land: matchMedia('(orientation: landscape)').matches, tilt: null }));
+  useEffect(() => {
+    const small = matchMedia(SMALL);
+    const land = matchMedia('(orientation: landscape)');
+    const read = () => setDev((d) => ({ ...d, small: small.matches, land: land.matches }));
+    small.addEventListener('change', read);
+    land.addEventListener('change', read);
+    // Gravity says which edge is down. ponytail: iOS reports it with the sign flipped vs Android;
+    // if a device ever turns the wrong way, this IOS flip is the calibration knob.
+    const onMotion = (e) => {
+      const g = e.accelerationIncludingGravity;
+      if (g?.x == null) return;
+      const ax = Math.abs(g.x);
+      const ay = Math.abs(g.y);
+      const next = ax > 6.5 && ax > ay * 1.6 ? (g.x > 0 !== IOS ? 'cw' : 'ccw') : ay > 6.5 && ay > ax * 1.6 ? null : undefined;
+      if (next !== undefined) setDev((d) => (d.tilt === next ? d : { ...d, tilt: next }));
+    };
+    const listen = () => addEventListener('devicemotion', onMotion);
+    const firstTap = () => {
+      if (!small.matches) return;
+      // iOS only hands out motion data after asking, and only from a tap.
+      const ask = window.DeviceMotionEvent?.requestPermission;
+      if (typeof ask === 'function') ask().then((st) => st === 'granted' && listen(), () => {});
+    };
+    if (typeof window.DeviceMotionEvent?.requestPermission !== 'function') listen();
+    addEventListener('pointerup', firstTap, { once: true });
+    return () => {
+      small.removeEventListener('change', read);
+      land.removeEventListener('change', read);
+      removeEventListener('devicemotion', onMotion);
+      removeEventListener('pointerup', firstTap);
+    };
+  }, []);
+  return dev;
+}
+
+// Full screen only on phone-sized screens, and only while the phone is up (where the browser allows it;
+// iPhone Safari has no Fullscreen API, "Add to Home Screen" covers it there).
+const fullscreenEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+function enterFullscreen() {
+  if (!matchMedia(SMALL).matches || fullscreenEl()) return;
+  const el = document.documentElement;
+  (el.requestFullscreen?.({ navigationUI: 'hide' }) || el.webkitRequestFullscreen?.())?.catch?.(() => {});
+}
+function exitFullscreen() {
+  if (fullscreenEl()) (document.exitFullscreen?.() || document.webkitExitFullscreen?.())?.catch?.(() => {});
+}
+
 function Experience() {
   const [q, nav] = useUrlState();
   const { passed, setWhere, markRead, ringing, ready, setComposing } = useGame();
@@ -80,6 +133,7 @@ function Experience() {
   }, [o, q.app, nav, flash]);
 
   const pickup = () => {
+    enterFullscreen(); // inside the tap, which is the only time browsers allow it
     play('pickup');
     nav({ phone: 'up' });
   };
@@ -105,17 +159,29 @@ function Experience() {
     return () => removeEventListener('keydown', onKey);
   }, [up, onHome, q.app, nav, putAway, rotate, home]);
 
-  // On a real phone the device *is* the phone: follow its orientation.
+  // On a real phone the device *is* the phone: follow its orientation — even with rotation lock on.
+  const dev = useDevice();
+  const wantLand = dev.small && (dev.land || (!!dev.tilt && !PORTRAIT_ONLY[q.app]));
   useEffect(() => {
-    const small = matchMedia('(max-width: 560px), (max-height: 480px)');
-    const land = matchMedia('(orientation: landscape)');
-    const sync = () => {
-      if (small.matches) nav({ o: land.matches ? 'landscape' : null }, { replace: true });
-    };
-    sync();
-    land.addEventListener('change', sync);
-    return () => land.removeEventListener('change', sync);
-  }, [nav]);
+    if (dev.small && (q.o === 'landscape') !== wantLand) nav({ o: wantLand ? 'landscape' : null }, { replace: true });
+  }, [dev.small, wantLand, q.o, nav]);
+  // Phone up via a link/back button (no tap to piggyback on): go full screen on the next tap.
+  // Phone away, or no longer phone-sized: leave full screen.
+  useEffect(() => {
+    if (!up || !dev.small) return exitFullscreen();
+    addEventListener('pointerup', enterFullscreen, { once: true });
+    return () => removeEventListener('pointerup', enterFullscreen);
+  }, [up, dev.small]);
+  // On phones the iFrute fills the screen, so there's no world to tap: the home bar on the home/lock
+  // screen puts it away. Tell people once.
+  useEffect(() => {
+    if (!dev.small || q.app !== 'home' || localStorage.getItem('vyral:awayHint')) return;
+    localStorage.setItem('vyral:awayHint', '1');
+    const t = setTimeout(() => flash('Tap the bar at the bottom again to put your phone away'), 1200);
+    return () => clearTimeout(t);
+  }, [dev.small, q.app, flash]);
+  // Rotation-locked phone held sideways: the viewport stays portrait, so the phone UI turns itself.
+  const tilt = dev.small && !dev.land && wantLand ? dev.tilt : null;
 
   if (!introDone)
     return (
@@ -132,7 +198,7 @@ function Experience() {
   return (
     <>
       <World up={up} onPickup={up ? (onHome ? putAway : undefined) : pickup} />
-      <Phone up={up} orientation={o} locked={locked} studio={q.view === 'studio'} current={q.app} toast={toast || (deviceLandscapeBlocked && `↻ ${PORTRAIT_ONLY[q.app]} Rotate back to portrait.`)} onHome={home} onRotate={rotate}>
+      <Phone up={up} orientation={o} tilt={tilt} locked={locked} studio={q.view === 'studio'} current={q.app} toast={toast || (deviceLandscapeBlocked && `↻ ${PORTRAIT_ONLY[q.app]} Rotate back to portrait.`)} onHome={dev.small && onHome ? putAway : home} onRotate={rotate}>
         {!up ? null : locked ? (
           <Lock onUnlock={home} />
         ) : AppView ? (

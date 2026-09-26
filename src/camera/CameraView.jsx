@@ -42,27 +42,32 @@ export default function CameraView({ mode = 'sus', initialMode = 'POST', onCaptu
   const filter = gram ? GRAM_FILTERS[filterIdx] : null;
 
   // Webcam lifecycle — tracks stop on unmount so the camera light turns off. Front + back supported.
+  // `attempt` re-runs it from a tap: iPad/iOS Safari may only show the permission prompt for a user gesture.
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     let stream;
     let dead = false;
-    if (!navigator.mediaDevices?.getUserMedia) {
-      setError('unsupported');
+    const md = navigator.mediaDevices;
+    if (!md?.getUserMedia) {
+      setError(window.isSecureContext ? 'unsupported' : 'insecure');
       return;
     }
-    navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: facing, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false })
+    setError(null);
+    md.getUserMedia({ video: { facingMode: facing, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false })
+      // Some iPads reject the resolution hint; any camera beats no camera.
+      .catch((e) => (e.name === 'OverconstrainedError' ? md.getUserMedia({ video: true, audio: false }) : Promise.reject(e)))
       .then((s) => {
-        if (dead) return s.getTracks().forEach((t) => t.stop());
+        if (dead || !videoRef.current) return s.getTracks().forEach((t) => t.stop());
         stream = s;
         videoRef.current.srcObject = s;
-        setError(null);
+        videoRef.current.play().catch(() => {}); // iOS won't always honour autoPlay on a stream
       })
-      .catch((e) => setError(e.name || 'error'));
+      .catch((e) => !dead && setError(e.name || 'error'));
     return () => {
       dead = true;
       stream?.getTracks().forEach((t) => t.stop());
     };
-  }, [facing]);
+  }, [facing, attempt]);
 
   // Live lens preview: blend "grade" on its own canvas (CSS mix-blend-mode), overlay on another.
   useEffect(() => {
@@ -186,13 +191,20 @@ export default function CameraView({ mode = 'sus', initialMode = 'POST', onCaptu
           <b>NO SIGNAL</b>
           <span>
             {error === 'NotAllowedError'
-              ? 'VCPD confiscated your camera. (Permission denied — allow it in the address bar, or use a photo.)'
-              : 'No camera found. Probably pawned.'}
+              ? 'VCPD confiscated your camera. Allow it in the address bar (iPhone/iPad: Settings › Safari › Camera), or use a photo.'
+              : error === 'insecure'
+                ? 'The camera only works over HTTPS. Leonida has standards, apparently.'
+                : 'No camera found. Probably pawned.'}
           </span>
+          {error !== 'insecure' && <button onClick={() => setAttempt((a) => a + 1)}>Try again</button>}
           <button onClick={() => setTray(true)}>Use a photo instead</button>
         </>
       ) : (
-        <span className="cam-waking">Waking up the camera… (allow access, we promise it’s only for crimes against fashion)</span>
+        <>
+          <span className="cam-waking">Waking up the camera… (allow access, we promise it’s only for crimes against fashion)</span>
+          <button onClick={() => setAttempt((a) => a + 1)}>Tap to allow camera</button>
+          <button onClick={() => setTray(true)}>Use a photo instead</button>
+        </>
       )}
     </div>
   );

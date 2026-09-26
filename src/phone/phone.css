@@ -93,6 +93,7 @@
 .sb-bars i { width: 3px; background: #fff; border-radius: 1px; }
 .sb-time { position: absolute; left: 50%; transform: translateX(-50%); }
 .sb-right { display: flex; align-items: center; gap: 4px; }
+.sb-mute { font-size: 11px; line-height: 1; padding: 0 2px; }
 .sb-batt { width: 22px; height: 10px; border: 1.5px solid #fff; border-radius: 2px; position: relative; display: block; }
 .sb-batt::after { content: ''; position: absolute; right: -4px; top: 2px; width: 2px; height: 4px; background: #fff; }
 .sb-batt b { display: block; height: 100%; background: #fff; transition: width .6s; }
@@ -142,6 +143,16 @@
   }
   .home-float::after { content: ''; position: absolute; left: 10px; right: 10px; bottom: 5px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.75); box-shadow: 0 0 0 1px rgba(0,0,0,.25); }
   .edge-swipe { width: 18px; }
+  /* Performance: on phones the iFrute covers the whole screen, so nothing behind it needs painting,
+     and there's no mouse for the glare to follow. */
+  body:has(.phone-stage.is-up) .world { display: none; }
+  .phone-glare { display: none; }
+  /* SVG glow filters re-rasterise on every animation frame; phones get flat neon instead. */
+  .leonida [filter] { filter: none; }
+  /* Rotation lock on, phone held sideways: viewport stays portrait, so lay out landscape and turn it. */
+  .phone-stage.landscape.tilt-cw .phone, .phone-stage.landscape.tilt-ccw .phone { width: 100dvh; height: 100vw; flex-shrink: 0; }
+  .phone-stage.tilt-cw .phone { rotate: 90deg; }
+  .phone-stage.tilt-ccw .phone { rotate: -90deg; }
 }
 
 /* ================= Lock screen ================= */
@@ -298,7 +309,8 @@
 .lock-note .banner-icon img { width: 100%; height: 100%; object-fit: cover; }
 .lock-note-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .wallpaper--parallax { inset: -14px; transform: translate(var(--px, 0), var(--py, 0)); transition: transform .3s ease-out; }
-.home-pages { position: relative; z-index: 1; flex: 1; min-height: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; }
+.home-pages { position: relative; z-index: 1; flex: 1; min-height: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; user-select: none; }
+.home-pages::-webkit-scrollbar { display: none; }
 .home-page { flex: 0 0 100%; scroll-snap-align: start; display: flex; flex-direction: column; overflow-y: auto; }
 .home .app-icon { animation: icon-pop .45s cubic-bezier(.2,1.5,.4,1) both; }
 .home .app-icon.featured { animation: icon-pop .45s cubic-bezier(.2,1.5,.4,1) both; }

@@ -1,0 +1,9 @@
+{
+  "name": "VYRAL: Grand Theft Attention",
+  "short_name": "VYRAL",
+  "start_url": "/app",
+  "display": "fullscreen",
+  "background_color": "#000000",
+  "theme_color": "#1b0f3a",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

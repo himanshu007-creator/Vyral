@@ -1,4 +1,5 @@
 import { unlayer, CREATOR, ASSETS_BY } from '../ui/links';
+import { useSyncExternalStore } from 'react';
 import useSkyPhase from '../lib/useSkyPhase';
 import './leonida.css';
 
@@ -50,8 +51,22 @@ const Ad = ({ href, ads, label, children }) =>
     children
   );
 
+// Tall screens (phones, portrait iPad) would crop the billboards off the sides with `slice`,
+// so they frame just the ad strip and pin it to the bottom; the sky colour fills above.
+const TALL = '(max-aspect-ratio: 5/4)';
+const useTall = () =>
+  useSyncExternalStore(
+    (fn) => {
+      const m = matchMedia(TALL);
+      m.addEventListener('change', fn);
+      return () => m.removeEventListener('change', fn);
+    },
+    () => matchMedia(TALL).matches,
+  );
+
 export default function Leonida({ className = '', still = false, ads = false, billboards = true, phase: forced }) {
   const live = useSkyPhase();
+  const framed = useTall() && billboards;
   const phase = forced || live;
   const p = PAL[phase];
   const vars = {
@@ -61,7 +76,7 @@ export default function Leonida({ className = '', still = false, ads = false, bi
   };
   const stop = (v) => ({ stopColor: `var(${v})` });
   return (
-    <svg className={`leonida ${still ? 'leonida--still' : ''} ${className}`} data-phase={phase} style={vars} viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden={!ads}>
+    <svg className={`leonida ${still ? 'leonida--still' : ''} ${className}`} data-phase={phase} style={framed ? { ...vars, background: 'var(--s0)' } : vars} viewBox={framed ? '340 0 720 900' : '0 0 1600 900'} preserveAspectRatio={framed ? 'xMidYMax meet' : 'xMidYMid slice'} aria-hidden={!ads}>
       <defs>
         <linearGradient id="lsky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" style={stop('--s0')} />

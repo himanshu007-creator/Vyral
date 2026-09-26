@@ -418,7 +418,7 @@ function Caption({ image, meta, onPost, onBack }) {
 }
 
 export default function Reelgram({ q, nav, flash }) {
-  const { media, clock, notifs, addMedia, removeMedia, unlock, alert, stars, totalLikes, openNotif, burst, storyBurst, state, celebratePost } = useGame();
+  const { media, clock, notifs, addMedia, removeMedia, unlock, alert, stars, totalLikes, openNotif, burst, storyBurst, state, celebratePost, ready } = useGame();
   const view = q.view || 'splash';
   const [draft, setDraft] = useState(null);
   const [posting, setPosting] = useState(false);
@@ -679,7 +679,19 @@ export default function Reelgram({ q, nav, flash }) {
   if (view === 'post') {
     const p = findPost(q.id);
     const isMine = !!mine.find((m) => m.id === q.id);
-    if (!p) return <div className="rg" onClick={() => nav({ view: 'feed' })} />;
+    // Deep links land before IndexedDB has loaded, and a post may be deleted or from another browser.
+    if (!p)
+      return (
+        <div className="rg">
+          {ready && (
+            <div className="rg-missing">
+              <b>This post has left Leonida.</b>
+              <span>Deleted, expired, or it lives on someone else’s phone.</span>
+              <button onClick={() => nav({ view: 'feed', id: null }, { replace: true })}>Back to feed</button>
+            </div>
+          )}
+        </div>
+      );
     return (
       <div className="rg">
         <header className="rg-head">
