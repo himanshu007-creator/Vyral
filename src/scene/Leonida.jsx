@@ -217,16 +217,16 @@ export default function Leonida({ className = '', still = false, ads = false, bi
               </g>
             </Ad>
 
-            {/* 3 — R3SPAWN club: shoutout to the artist behind the stills */}
+            {/* 3 — r3spawnhere club: shoutout to the artist behind the stills */}
             <Ad href={ASSETS_BY} ads={ads} label="@r3spawnhere on Instagram">
               <g>
                 <rect x="865" y="552" width="150" height="76" fill="transparent" />
                 <rect x="873" y="560" width="134" height="30" rx="3" fill="#12061f" stroke="#ff2e88" strokeWidth="2" filter="url(#lneon)" />
-                <text x="940" y="582" textAnchor="middle" fontFamily="Anton, sans-serif" fontSize="19" letterSpacing="4" fill="#ff5fb0" className="l-neon">
-                  R3SPAWN
+                <text x="940" y="582" textAnchor="middle" fontFamily="Anton, sans-serif" fontSize="17" letterSpacing="1.5" fill="#ff5fb0" className="l-neon">
+                  r3spawnhere
                 </text>
                 <text x="940" y="606" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="9" fontWeight="700" fill="#00f0ff" className="l-flicker">
-                  @r3spawnhere · assets on the house
+                  stills on the house · instagram ↗
                 </text>
                 {[0, 1, 2, 3, 4, 5].map((i) => (
                   <circle key={i} cx={885 + i * 22} cy="620" r="2.5" fill="#ffd23f" className="l-bulb" style={{ animationDelay: `${i * 0.12}s` }} />
